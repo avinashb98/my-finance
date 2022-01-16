@@ -14,7 +14,7 @@ func StartApplication() {
 	router.Use(gin.Recovery())
 	router.GET("/status", http.Status)
 
-	port := config.SERVER_PORT
+	port := config.ServerPort
 	err := router.Run(":" + port)
 	if err != nil {
 		panic(err)
