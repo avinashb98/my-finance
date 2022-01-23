@@ -74,27 +74,50 @@ func TestRepository_GetUserByHandle(t *testing.T) {
 
 func TestRepository_CreateUser(t *testing.T) {
 	var db mongo.Database
-	var collection mongo.Collection
+	var userCollection mongo.Collection
+	var authCollection mongo.Collection
 
 	db = &mocks.Database{}
-	collection = &mocks.Collection{}
+	userCollection = &mocks.Collection{}
+	authCollection = &mocks.Collection{}
 
-	collection.(*mocks.Collection).
+	userCollection.(*mocks.Collection).
 		On("InsertOne", context.Background(), user.User{Handle: "validHandleName"}).
 		Return("", nil)
 
-	collection.(*mocks.Collection).
+	userCollection.(*mocks.Collection).
 		On("InsertOne", context.Background(), user.User{Handle: "invalidHandleName"}).
-		Return("", fmt.Errorf("invalid handle"))
+		Return("", fmt.Errorf("something went wrong"))
+
+	authCollection.(*mocks.Collection).
+		On("InsertOne", context.Background(), user.Auth{Handle: "validHandleName", PasswordHash: "validHash"}).
+		Return("", nil)
+
+	authCollection.(*mocks.Collection).
+		On("InsertOne", context.Background(), user.Auth{Handle: "validHandleName", PasswordHash: "invalidHash"}).
+		Return("", fmt.Errorf("problematic hash"))
 
 	db.(*mocks.Database).
 		On("Collection", "user").
-		Return(collection)
+		Return(userCollection)
+
+	db.(*mocks.Database).
+		On("Collection", "auth").
+		Return(authCollection)
 
 	repo := user.NewRepository(context.Background(), db)
-	err := repo.CreateUser(context.Background(), user.User{Handle: "validHandleName"})
+
+	err := repo.CreateUser(context.Background(), user.User{Handle: "validHandleName"}, user.Auth{Handle: "validHandleName", PasswordHash: "validHash"})
 	assert.Empty(t, err)
-	err = repo.CreateUser(context.Background(), user.User{Handle: "invalidHandleName"})
+
+	err = repo.CreateUser(context.Background(), user.User{Handle: "invalidHandleName"}, user.Auth{Handle: "validHandleName", PasswordHash: "validHash"})
 	assert.NotEmpty(t, err)
-	assert.Equal(t, err.Error(), "invalid handle")
+	assert.Equal(t, err.Error(), "something went wrong")
+
+	err = repo.CreateUser(context.Background(), user.User{Handle: "validHandleName"}, user.Auth{Handle: "validHandleName", PasswordHash: "validHash"})
+	assert.Empty(t, err)
+
+	err = repo.CreateUser(context.Background(), user.User{Handle: "validHandleName"}, user.Auth{Handle: "validHandleName", PasswordHash: "invalidHash"})
+	assert.NotEmpty(t, err)
+	assert.Equal(t, err.Error(), "problematic hash")
 }

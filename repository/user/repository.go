@@ -21,6 +21,10 @@ func (r *repository) GetUserByHandle(ctx context.Context, handle string) (*User,
 	return r.getUserByHandle(ctx, handle)
 }
 
-func (r *repository) CreateUser(ctx context.Context, user User) error {
-	return r.createUser(ctx, user)
+func (r *repository) CreateUser(ctx context.Context, user User, auth Auth) error {
+	return r.createUser(ctx, user, auth)
+}
+
+func (r *repository) GetUserAuthByHandle(ctx context.Context, handle string) (*Auth, error) {
+	return r.getUserAuthByHandle(ctx, handle)
 }
