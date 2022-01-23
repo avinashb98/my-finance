@@ -46,12 +46,12 @@ type mongoSession struct {
 	mongo.Session
 }
 
-func NewClient(cnf *config.MongoConfig) (Client, error) {
+func NewClient(cnf *config.Mongo) (Client, error) {
 	c, err := mongo.NewClient(options.Client().ApplyURI(cnf.URI))
 	return &mongoClient{cl: c}, err
 }
 
-func NewDatabase(cnf *config.MongoConfig, client Client) Database {
+func NewDatabase(cnf *config.Mongo, client Client) Database {
 	return client.Database(cnf.Database)
 }
 
@@ -86,7 +86,7 @@ func (mc *mongoCollection) FindOne(ctx context.Context, filter interface{}) Sing
 
 func (mc *mongoCollection) InsertOne(ctx context.Context, document interface{}) (interface{}, error) {
 	id, err := mc.coll.InsertOne(ctx, document)
-	return id.InsertedID, err
+	return id, err
 }
 
 //func (mc *mongoCollection) DeleteOne(ctx context.Context, filter interface{}) (int64, error) {
