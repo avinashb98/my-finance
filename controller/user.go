@@ -43,10 +43,13 @@ func (u *userController) CreateUser(c *gin.Context) error {
 }
 
 func (u *userController) GetUserByHandle(c *gin.Context) (*user.User, error) {
-	var input UserInput
-	err := c.ShouldBind(&input)
-	if err != nil {
+	handle, ok := c.Get("handle")
+	if !ok {
+		return nil, fmt.Errorf("user handle not found")
+	}
+	if handle == "" {
 		return nil, fmt.Errorf("invalid user handle")
 	}
-	return u.userService.GetUserByHandle(c, input.Handle)
+
+	return u.userService.GetUserByHandle(c, handle.(string))
 }

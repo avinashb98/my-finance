@@ -5,6 +5,7 @@ import (
 	"github.com/avinashb98/myfin/config"
 	"github.com/avinashb98/myfin/controller"
 	"github.com/avinashb98/myfin/datasources/mongo"
+	"github.com/avinashb98/myfin/middleware"
 	userRepo "github.com/avinashb98/myfin/repository/user"
 	"github.com/avinashb98/myfin/service/auth"
 	userService "github.com/avinashb98/myfin/service/user"
@@ -38,6 +39,7 @@ func StartApplication() {
 
 	authService := auth.NewService(conf.JWT, userR)
 	loginHandler := controller.LoginHandler(authService)
+	authMiddleware := middleware.AuthorizeJWT(authService)
 
 	apiV1Router := router.Group("/api/v1")
 	{
@@ -54,7 +56,7 @@ func StartApplication() {
 			})
 		})
 
-		apiV1Router.GET("/user/:handle", func(c *gin.Context) {
+		apiV1Router.GET("/user/:handle", authMiddleware, func(c *gin.Context) {
 			_user, err := userController.GetUserByHandle(c)
 			if err != nil {
 				c.JSON(http.StatusInternalServerError, gin.H{

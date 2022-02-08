@@ -16,6 +16,9 @@ func (r *repository) getUserByHandle(ctx context.Context, handle string) (*User,
 	var result User
 	err := userColl.FindOne(ctx, bson.M{"handle": handle}).Decode(&result)
 	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			err = fmt.Errorf("user not found")
+		}
 		return nil, err
 	}
 	return &result, nil

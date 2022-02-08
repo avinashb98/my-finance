@@ -8,17 +8,29 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+const BearerSchema = "Bearer "
+
 func AuthorizeJWT(authService auth.Service) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		const BEARER_SCHEMA = "Bearer"
+
 		authHeader := c.GetHeader("Authorization")
-		tokenString := authHeader[len(BEARER_SCHEMA):]
+		if authHeader == "" {
+			c.JSON(http.StatusUnauthorized, gin.H{
+				"message": "authentication header missing",
+			})
+			c.Abort()
+			return
+		}
+		tokenString := authHeader[len(BearerSchema):]
 		token, err := authService.ValidateToken(tokenString)
+		if err != nil {
+			fmt.Println(err)
+			c.AbortWithStatus(http.StatusUnauthorized)
+		}
 		if token.Valid {
 			claims := token.Claims.(*auth.Payload)
-			fmt.Println(claims)
+			c.Set("handle", claims.Handle)
 		} else {
-			fmt.Println(err)
 			c.AbortWithStatus(http.StatusUnauthorized)
 		}
 	}
