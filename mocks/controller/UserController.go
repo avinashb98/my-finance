@@ -50,3 +50,26 @@ func (_m *UserController) GetUserByHandle(c *gin.Context) (*user.User, error) {
 
 	return r0, r1
 }
+
+// SetUserNetWorth provides a mock function with given fields: c
+func (_m *UserController) SetUserNetWorth(c *gin.Context) (*user.NetWorth, error) {
+	ret := _m.Called(c)
+
+	var r0 *user.NetWorth
+	if rf, ok := ret.Get(0).(func(*gin.Context) *user.NetWorth); ok {
+		r0 = rf(c)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*user.NetWorth)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(*gin.Context) error); ok {
+		r1 = rf(c)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}

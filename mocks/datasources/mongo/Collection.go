@@ -30,6 +30,22 @@ func (_m *Collection) FindOne(_a0 context.Context, _a1 interface{}) mongo.Single
 	return r0
 }
 
+// FindOneAndUpdate provides a mock function with given fields: _a0, _a1, _a2
+func (_m *Collection) FindOneAndUpdate(_a0 context.Context, _a1 interface{}, _a2 interface{}) mongo.SingleResult {
+	ret := _m.Called(_a0, _a1, _a2)
+
+	var r0 mongo.SingleResult
+	if rf, ok := ret.Get(0).(func(context.Context, interface{}, interface{}) mongo.SingleResult); ok {
+		r0 = rf(_a0, _a1, _a2)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(mongo.SingleResult)
+		}
+	}
+
+	return r0
+}
+
 // InsertOne provides a mock function with given fields: _a0, _a1
 func (_m *Collection) InsertOne(_a0 context.Context, _a1 interface{}) (interface{}, error) {
 	ret := _m.Called(_a0, _a1)

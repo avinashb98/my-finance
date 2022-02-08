@@ -73,3 +73,26 @@ func (_m *Service) GetUserByHandle(_a0 context.Context, _a1 string) (*user.User,
 
 	return r0, r1
 }
+
+// SetUserNetWorth provides a mock function with given fields: _a0, _a1, _a2
+func (_m *Service) SetUserNetWorth(_a0 context.Context, _a1 string, _a2 int) (*user.NetWorth, error) {
+	ret := _m.Called(_a0, _a1, _a2)
+
+	var r0 *user.NetWorth
+	if rf, ok := ret.Get(0).(func(context.Context, string, int) *user.NetWorth); ok {
+		r0 = rf(_a0, _a1, _a2)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*user.NetWorth)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, string, int) error); ok {
+		r1 = rf(_a0, _a1, _a2)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
