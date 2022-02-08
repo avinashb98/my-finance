@@ -12,6 +12,7 @@ type Service interface {
 	GetUserByHandle(context.Context, string) (*User, error)
 	CreateUser(context.Context, User, string) error
 	GetUserAuthByHandle(context.Context, string) (*Auth, error)
+	SetUserNetWorth(context.Context, string, int) (*NetWorth, error)
 }
 
 type service struct {
@@ -86,4 +87,22 @@ func (s *service) CreateUser(ctx context.Context, userInput User, password strin
 		UpdatedAt: time.Now(),
 	}
 	return s.netWorthRepo.CreateNetWorth(ctx, _netWorth)
+}
+
+func (s *service) SetUserNetWorth(ctx context.Context, handle string, worth int) (*NetWorth, error) {
+	updatedAt := time.Now()
+	_netWorth := net_worth.NetWorth{
+		Handle:    handle,
+		NetWorth:  worth,
+		UpdatedAt: updatedAt,
+	}
+	netWorth, err := s.netWorthRepo.SetNetWorth(ctx, _netWorth)
+	if err != nil {
+		return nil, err
+	}
+	return &NetWorth{
+		Handle:    netWorth.Handle,
+		NetWorth:  netWorth.NetWorth,
+		UpdatedAt: netWorth.UpdatedAt,
+	}, nil
 }

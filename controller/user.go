@@ -13,9 +13,14 @@ type UserInput struct {
 	Password string `json:"password"`
 }
 
+type NetWorthInput struct {
+	NetWorth int `json:"net_worth"`
+}
+
 type UserController interface {
 	CreateUser(c *gin.Context) error
 	GetUserByHandle(c *gin.Context) (*user.User, error)
+	SetUserNetWorth(c *gin.Context) (*user.NetWorth, error)
 }
 
 type userController struct {
@@ -52,4 +57,20 @@ func (u *userController) GetUserByHandle(c *gin.Context) (*user.User, error) {
 	}
 
 	return u.userService.GetUserByHandle(c, handle.(string))
+}
+
+func (u *userController) SetUserNetWorth(c *gin.Context) (*user.NetWorth, error) {
+	handle, ok := c.Get("handle")
+	if !ok {
+		return nil, fmt.Errorf("user handle not found")
+	}
+	if handle.(string) == "" {
+		return nil, fmt.Errorf("invalid user handle")
+	}
+	var input NetWorthInput
+	err := c.ShouldBind(&input)
+	if err != nil {
+		return nil, fmt.Errorf("invalid user networth details")
+	}
+	return u.userService.SetUserNetWorth(c, handle.(string), input.NetWorth)
 }

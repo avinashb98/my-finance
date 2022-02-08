@@ -43,5 +43,4 @@ func TestRepository_CreateNetWorth(t *testing.T) {
 	err = repo.CreateNetWorth(context.Background(), net_worth.NetWorth{Handle: "duplicateHandleName"})
 	assert.NotEmpty(t, err)
 	assert.Equal(t, err.Error(), "something went wrong")
-
 }

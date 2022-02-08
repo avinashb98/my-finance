@@ -14,3 +14,9 @@ type Auth struct {
 	Handle       string
 	PasswordHash string
 }
+
+type NetWorth struct {
+	Handle    string    `json:"handle"`
+	NetWorth  int       `json:"net_worth"`
+	UpdatedAt time.Time `json:"updated_at"`
+}

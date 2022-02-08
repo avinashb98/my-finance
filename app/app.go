@@ -58,17 +58,6 @@ func StartApplication() {
 			})
 		})
 
-		apiV1Router.GET("/user/:handle", authMiddleware, func(c *gin.Context) {
-			_user, err := userController.GetUserByHandle(c)
-			if err != nil {
-				c.JSON(http.StatusInternalServerError, gin.H{
-					"message": err.Error(),
-				})
-				return
-			}
-			c.JSON(http.StatusOK, _user)
-		})
-
 		apiV1Router.POST("/user", func(c *gin.Context) {
 			err := userController.CreateUser(c)
 			if err != nil {
@@ -80,6 +69,28 @@ func StartApplication() {
 			c.JSON(http.StatusCreated, gin.H{
 				"message": "User successfully created",
 			})
+		})
+
+		apiV1Router.GET("/user/:handle", authMiddleware, func(c *gin.Context) {
+			_user, err := userController.GetUserByHandle(c)
+			if err != nil {
+				c.JSON(http.StatusInternalServerError, gin.H{
+					"message": err.Error(),
+				})
+				return
+			}
+			c.JSON(http.StatusOK, _user)
+		})
+
+		apiV1Router.PATCH("/user/net-worth", authMiddleware, func(c *gin.Context) {
+			_user, err := userController.SetUserNetWorth(c)
+			if err != nil {
+				c.JSON(http.StatusInternalServerError, gin.H{
+					"message": err.Error(),
+				})
+				return
+			}
+			c.JSON(http.StatusOK, _user)
 		})
 	}
 

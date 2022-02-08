@@ -20,3 +20,7 @@ func NewRepository(ctx context.Context, db mongo.Database) Repository {
 func (r *repository) CreateNetWorth(ctx context.Context, worth NetWorth) error {
 	return r.createNetWorth(ctx, worth)
 }
+
+func (r *repository) SetNetWorth(ctx context.Context, worth NetWorth) (*NetWorth, error) {
+	return r.setNetWorth(ctx, worth)
+}
