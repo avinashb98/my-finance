@@ -2,6 +2,7 @@ package user
 
 import (
 	"context"
+	"github.com/avinashb98/myfin/repository/net_worth"
 	"github.com/avinashb98/myfin/repository/user"
 	"github.com/avinashb98/myfin/utils"
 	"time"
@@ -14,12 +15,14 @@ type Service interface {
 }
 
 type service struct {
-	userRepo user.Repository
+	userRepo     user.Repository
+	netWorthRepo net_worth.Repository
 }
 
-func NewService(userRepo user.Repository) Service {
+func NewService(userRepo user.Repository, netWorthRepo net_worth.Repository) Service {
 	return &service{
-		userRepo: userRepo,
+		userRepo:     userRepo,
+		netWorthRepo: netWorthRepo,
 	}
 }
 
@@ -72,5 +75,15 @@ func (s *service) CreateUser(ctx context.Context, userInput User, password strin
 		LastLogin:    time.Now(),
 	}
 
-	return s.userRepo.CreateUser(ctx, _user, _auth)
+	err = s.userRepo.CreateUser(ctx, _user, _auth)
+	if err != nil {
+		return err
+	}
+
+	_netWorth := net_worth.NetWorth{
+		Handle:    userInput.Handle,
+		NetWorth:  0,
+		UpdatedAt: time.Now(),
+	}
+	return s.netWorthRepo.CreateNetWorth(ctx, _netWorth)
 }

@@ -6,6 +6,7 @@ import (
 	"github.com/avinashb98/myfin/controller"
 	"github.com/avinashb98/myfin/datasources/mongo"
 	"github.com/avinashb98/myfin/middleware"
+	netWorthRepo "github.com/avinashb98/myfin/repository/net_worth"
 	userRepo "github.com/avinashb98/myfin/repository/user"
 	"github.com/avinashb98/myfin/service/auth"
 	userService "github.com/avinashb98/myfin/service/user"
@@ -34,7 +35,8 @@ func StartApplication() {
 	mongoDB := mongo.NewDatabase(&conf.Mongo, mongoClient)
 
 	userR := userRepo.NewRepository(ctx, mongoDB)
-	userS := userService.NewService(userR)
+	netWorthR := netWorthRepo.NewRepository(ctx, mongoDB)
+	userS := userService.NewService(userR, netWorthR)
 	userController := controller.NewUserController(userS)
 
 	authService := auth.NewService(conf.JWT, userR)
